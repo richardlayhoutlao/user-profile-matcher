@@ -57,3 +57,14 @@ async def update_player(db: db_dependency, player_request: PlayerRequest, player
     
     db.add(player_model)
     db.commit()
+    
+    
+@app.delete("/player/{player_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_player(db: db_dependency, player_id: int = Path(gt=0)):
+
+    player_model = db.query(Players).filter(Players.player_id == player_id).first()
+    if player_model is None:
+        raise HTTPException(status_code=404, detail='Player not found.')
+    
+    db.query(Players).filter(Players.player_id == player_id).delete()
+    db.commit()
