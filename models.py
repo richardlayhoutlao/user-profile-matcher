@@ -1,15 +1,18 @@
 from database import Base
-from sqlalchemy import Column, ForeignKey, Integer, String, Boolean
+from sqlalchemy import Column, DateTime, Integer, String, Boolean
 
 
 class Campaigns(Base):
     __tablename__ = 'campaigns'
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True)
-    game = Column(String, unique=True)
+    campaign_id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    game = Column(String)
     priority = Column(Integer)
+    start_date = Column(DateTime)
+    end_date = Column(DateTime)
     enabled = Column(Boolean)
+    last_updated = Column(DateTime)
 
 class Players(Base):
     __tablename__ = 'players'
@@ -17,4 +20,3 @@ class Players(Base):
     player_id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
     total_spent = Column(Integer)
-    campaign_id = Column(Integer, ForeignKey("campaigns.id"))

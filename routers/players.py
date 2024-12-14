@@ -38,7 +38,6 @@ async def create_player(db: db_dependency, player_request: PlayerRequest):
     player = Players(**player_request.model_dump())
     db.add(player)
     db.commit()
-    return player
     
 @router.put("/player/{player_id}", status_code=status.HTTP_201_CREATED, tags=["Players"])
 async def update_player(db: db_dependency, player_request: PlayerRequest, player_id:int = Path(gt=0)):
@@ -53,7 +52,6 @@ async def update_player(db: db_dependency, player_request: PlayerRequest, player
     
     db.add(player)
     db.commit()
-    return player
     
     
 @router.delete("/player/{player_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Players"])
