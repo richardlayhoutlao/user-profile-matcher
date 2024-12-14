@@ -7,5 +7,5 @@ app = FastAPI()
 
 models.Base.metadata.create_all(bind=engine)
 
-app.include_router(campaigns.router)
 app.include_router(players.router)
+app.include_router(campaigns.router)
