@@ -21,45 +21,46 @@ class PlayerRequest(BaseModel):
     name: str = Field(min_length= 3)
     total_spent: int = Field(gt= 0)
 
-@router.get("/", status_code=status.HTTP_200_OK)
+@router.get("/player", status_code=status.HTTP_200_OK, tags=["Players"])
 async def read_all_players(db: db_dependency):
     return db.query(Players).all()
 
 
-@router.get("/player/{player_id}", status_code=status.HTTP_200_OK)
+@router.get("/player/{player_id}", status_code=status.HTTP_200_OK, tags=["Players"])
 async def read_player(db: db_dependency, player_id:int = Path(gt=0)):
-    player_model = db.query(Players).filter(Players.player_id == player_id).first()
-    if player_model is not None:
-        return player_model
-    raise HTTPException(status_code=404, detail='Player not found')
+    player = db.query(Players).filter(Players.player_id == player_id).first()
+    if player is None:
+        raise HTTPException(status_code=404, detail='Player not found')
+    return player
 
-@router.post("/player", status_code=status.HTTP_201_CREATED)
+@router.post("/player", status_code=status.HTTP_201_CREATED, tags=["Players"])
 async def create_player(db: db_dependency, player_request: PlayerRequest):
-    player_model = Players(**player_request.model_dump())
-    
-    db.add(player_model)
+    player = Players(**player_request.model_dump())
+    db.add(player)
     db.commit()
+    return player
     
-@router.put("/player/{player_id}", status_code=status.HTTP_201_CREATED)
+@router.put("/player/{player_id}", status_code=status.HTTP_201_CREATED, tags=["Players"])
 async def update_player(db: db_dependency, player_request: PlayerRequest, player_id:int = Path(gt=0)):
     
-    player_model = db.query(Players).filter(Players.player_id == player_id).first()
+    player = db.query(Players).filter(Players.player_id == player_id).first()
     
-    if player_model is None:
+    if player is None:
         raise HTTPException(status_code=404, detail='Player not found.')
     
-    player_model.name = player_request.name
-    player_model.total_spent = player_request.total_spent
+    player.name = player_request.name
+    player.total_spent = player_request.total_spent
     
-    db.add(player_model)
+    db.add(player)
     db.commit()
+    return player
     
     
-@router.delete("/player/{player_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/player/{player_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Players"])
 async def delete_player(db: db_dependency, player_id: int = Path(gt=0)):
 
-    player_model = db.query(Players).filter(Players.player_id == player_id).first()
-    if player_model is None:
+    player = db.query(Players).filter(Players.player_id == player_id).first()
+    if player is None:
         raise HTTPException(status_code=404, detail='Player not found.')
     
     db.query(Players).filter(Players.player_id == player_id).delete()
