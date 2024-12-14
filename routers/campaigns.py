@@ -49,7 +49,7 @@ async def create_campaign(db: db_dependency, campaign_request: CampaignRequest):
     db.add(campaign)
     db.commit()
     
-@router.put("/campaign/{campaign_id}", status_code=status.HTTP_201_CREATED, tags=["Campaigns"])
+@router.put("/campaign/{campaign_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Campaigns"])
 async def update_campaign(db: db_dependency, campaign_request: CampaignRequest, campaign_id:int = Path(gt=0)):
     
     campaign = db.query(Campaigns).filter(Campaigns.campaign_id == campaign_id).first()
@@ -57,12 +57,10 @@ async def update_campaign(db: db_dependency, campaign_request: CampaignRequest, 
     if campaign is None:
         raise HTTPException(status_code=404, detail='Campaign not found.')
     
-    campaign.name = campaign_request.name
-    campaign.game = campaign_request.game
-    campaign.priority = campaign_request.priority
-    campaign.enabled = campaign_request.enabled
-    campaign.start_date = campaign_request.start_date
-    campaign.end_date = campaign_request.end_date
+    updatable_data = campaign_request.model_dump()
+    
+    for field, value in updatable_data.items():
+        setattr(campaign, field, value)
     
     timezone = pytz.timezone('America/New_York')
     campaign.last_updated = datetime.now(timezone)
