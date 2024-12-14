@@ -20,8 +20,8 @@ def get_db():
 db_dependency = Annotated[Session, Depends(get_db)]
 
 class Level(BaseModel):
-    min: int
-    max: int
+    min: int = Field(gt= 0)
+    max: int = Field(gt= 0)
 
 class Matchers(BaseModel):
     level: Level
@@ -29,13 +29,13 @@ class Matchers(BaseModel):
     does_not_have: dict
 
 class CampaignRequest(BaseModel):
-    name: str = Field(min_length= 3)
-    game: str = Field(min_length= 3)
+    game: str 
+    name: str 
+    priority: float = Field(gt= 0)
     matchers: Matchers
-    priority: int = Field(gt= 0)
     start_date: datetime
     end_date: datetime
-    enabled: bool = Field(default=True)
+    enabled: bool 
 
 @router.get("/campaign", status_code=status.HTTP_200_OK, tags=["Campaigns"])
 async def read_all_campaigns(db: db_dependency):
