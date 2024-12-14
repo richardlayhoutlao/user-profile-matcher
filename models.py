@@ -1,6 +1,6 @@
 import uuid
 from database import Base
-from sqlalchemy import JSON, UUID, Column, DateTime, Float, Integer, String, Boolean
+from sqlalchemy import JSON, Column, DateTime, Float, Integer, String, Boolean
 
 
 class Campaigns(Base):

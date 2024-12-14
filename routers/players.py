@@ -20,7 +20,7 @@ def get_db():
 db_dependency = Annotated[Session, Depends(get_db)]
 
 class Device(BaseModel):
-    id: str
+    id: int
     model: str
     carrier: str
     firmware: str
@@ -34,15 +34,15 @@ class PlayerRequest(BaseModel):
     created : datetime
     modified : datetime
     last_session : datetime
-    total_spent : float = Field(gt= 0)
-    total_refund : float = Field(gt= 0)
-    total_transactions : int = Field(gt= 0)
+    total_spent : float 
+    total_refund : float 
+    total_transactions : int 
     last_purchase : datetime
-    active_campaigns: list[str]  # List of active campaign IDs
+    active_campaigns: list[str]
     devices: list[Device]
     level : int = Field(gt= 0)
-    xp : int = Field(gt= 0)
-    total_playtime : float = Field(gt= 0)
+    xp : int 
+    total_playtime : float 
     country : str
     language : str
     birthdate : datetime
@@ -57,7 +57,15 @@ async def get_client_config(db: db_dependency, player_id:str):
     player = db.query(Players).filter(Players.player_id == player_id).first()
     if player is None:
         raise HTTPException(status_code=404, detail='Player not found')
-    return player
+    
+    current_time = datetime.now(pytz.UTC)
+    active_campaigns = db.query(Campaigns).filter(
+        Campaigns.enabled == True,
+        Campaigns.start_date <= current_time,
+        Campaigns.end_date >= current_time
+    ).all()
+    
+    print(active_campaigns)
 
 @router.get("/player", status_code=status.HTTP_200_OK, tags=["Players"])
 async def read_all_players(db: db_dependency):
@@ -109,14 +117,8 @@ async def delete_player(db: db_dependency, player_id: str):
     if player is None:
         raise HTTPException(status_code=404, detail='Player not found.')
     
-    current_time = datetime.now(pytz.UTC)
-    active_campaigns = db.query(Campaigns).filter(
-        Campaigns.enabled == True,
-        Campaigns.start_date <= current_time,
-        Campaigns.end_date >= current_time
-    ).all()
-    
-    print(active_campaigns)
+    db.query(Players).filter(Players.player_id == player_id).delete()
+    db.commit()
     
     
     

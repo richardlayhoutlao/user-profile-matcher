@@ -1,0 +1,95 @@
+[
+  {
+    "player_id": "97983be2-98b7-11e7-90cf-082e5f28d836",
+    "credential": "apple_credential",
+    "created": "2021-01-10T13:37:17Z",
+    "modified": "2021-01-23T13:37:17Z",
+    "last_session": "2021-01-23T13:37:17Z",
+    "total_spent": 400,
+    "total_refund": 0,
+    "total_transactions": 5,
+    "last_purchase": "2021-01-22T13:37:17Z",
+    "active_campaigns": [],
+    "devices": [
+      {
+        "id": 1,
+        "model": "apple iphone 11",
+        "carrier": "vodafone",
+        "firmware": "123"
+      }
+    ],
+    "level": 3,
+    "xp": 1000,
+    "total_playtime": 144,
+    "country": "CA",
+    "language": "fr",
+    "birthdate": "2000-01-10T13:37:17Z",
+    "gender": "male",
+    "inventory": {
+      "cash": 123,
+      "coins": 123,
+      "item_1": 1,
+      "item_34": 3,
+      "item_55": 2
+    },
+    "clan": {
+      "id": "123456",
+      "name": "Hello world clan"
+    },
+    "_customfield": "mycustom"
+  },
+  {
+    "credential": "user12345",
+    "created": "2024-01-01T10:00:00.000Z",
+    "total_spent": 150.75,
+    "modified": "2024-12-14T21:50:47.128Z",
+    "last_session": "2024-12-14T20:45:00.000Z",
+    "total_refund": 10.50,
+    "total_transactions": 5,
+    "last_purchase": "2024-12-14T19:30:00.000Z",
+    "active_campaigns": [
+      "Winter_Sale_2024",
+      "Holiday_Events"
+    ],
+    "devices": [
+      {
+        "id": 1,
+        "model": "iPhone 14",
+        "carrier": "Verizon",
+        "firmware": "iOS 17.2"
+      },
+      {
+        "id": 2,
+        "model": "Samsung Galaxy S23",
+        "carrier": "T-Mobile",
+        "firmware": "Android 14"
+      }
+    ],
+    "level": 15,
+    "xp": 4325,
+    "total_playtime": 250.5,
+    "country": "United States",
+    "language": "English",
+    "birthdate": "1990-06-15T00:00:00.000Z",
+    "gender": "Male",
+    "inventory": {
+      "currency": 500,
+      "items": [
+        {
+          "id": 101,
+          "name": "Sword of Light",
+          "quantity": 1
+        },
+        {
+          "id": 102,
+          "name": "Potion of Healing",
+          "quantity": 10
+        }
+      ]
+    },
+    "clan": {
+      "id": 123,
+      "name": "Warriors United"
+    }
+  }
+]
