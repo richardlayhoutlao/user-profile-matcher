@@ -20,7 +20,7 @@ def get_db():
 db_dependency = Annotated[Session, Depends(get_db)]
 
 class Device(BaseModel):
-    id: int
+    id: str
     model: str
     carrier: str
     firmware: str
@@ -32,18 +32,17 @@ class Clan(BaseModel):
 class PlayerRequest(BaseModel):
     credential: str
     created : datetime
-    total_spent: int = Field(gt= 0)
     modified : datetime
     last_session : datetime
-    total_spent : int = Field(gt= 0)
-    total_refund : int = Field(gt= 0)
+    total_spent : float = Field(gt= 0)
+    total_refund : float = Field(gt= 0)
     total_transactions : int = Field(gt= 0)
     last_purchase : datetime
     active_campaigns: list[str]  # List of active campaign IDs
     devices: list[Device]
     level : int = Field(gt= 0)
     xp : int = Field(gt= 0)
-    total_playtime : int = Field(gt= 0)
+    total_playtime : float = Field(gt= 0)
     country : str
     language : str
     birthdate : datetime
@@ -110,5 +109,15 @@ async def delete_player(db: db_dependency, player_id: str):
     if player is None:
         raise HTTPException(status_code=404, detail='Player not found.')
     
-    db.query(Players).filter(Players.player_id == player_id).delete()
-    db.commit()
+    current_time = datetime.now(pytz.UTC)
+    active_campaigns = db.query(Campaigns).filter(
+        Campaigns.enabled == True,
+        Campaigns.start_date <= current_time,
+        Campaigns.end_date >= current_time
+    ).all()
+    
+    print(active_campaigns)
+    
+    
+    
+    
