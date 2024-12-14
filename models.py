@@ -1,14 +1,16 @@
+import uuid
 from database import Base
-from sqlalchemy import Column, DateTime, Integer, String, Boolean
+from sqlalchemy import JSON, UUID, Column, DateTime, Integer, String, Boolean
 
 
 class Campaigns(Base):
     __tablename__ = 'campaigns'
 
-    campaign_id = Column(Integer, primary_key=True, index=True)
+    campaign_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()), unique=True, index=True)
     name = Column(String)
     game = Column(String)
     priority = Column(Integer)
+    matchers = Column(JSON)
     start_date = Column(DateTime)
     end_date = Column(DateTime)
     enabled = Column(Boolean)
@@ -17,7 +19,7 @@ class Campaigns(Base):
 class Players(Base):
     __tablename__ = 'players'
 
-    player_id = Column(Integer, primary_key=True, index=True)
+    player_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()), unique=True, index=True)
     credential = Column(String)
     created = Column(DateTime)
     modified = Column(DateTime)
@@ -33,6 +35,8 @@ class Players(Base):
     language = Column(String)
     birthdate = Column(DateTime)
     gender = Column(String)
+    inventory = Column(JSON)
+    clan = Column(JSON)
     _customfield = Column(String)
     
     

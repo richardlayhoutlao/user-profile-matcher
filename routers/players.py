@@ -19,6 +19,10 @@ def get_db():
         
 db_dependency = Annotated[Session, Depends(get_db)]
 
+class Clan(BaseModel):
+    id: str
+    name: str
+
 class PlayerRequest(BaseModel):
     credential: str
     total_spent: int = Field(gt= 0)
@@ -36,6 +40,8 @@ class PlayerRequest(BaseModel):
     language : str
     birthdate : datetime
     gender : str
+    inventory: dict
+    clan: dict
     _customfield : str
 
 @router.get("/player", status_code=status.HTTP_200_OK, tags=["Players"])
@@ -44,7 +50,7 @@ async def read_all_players(db: db_dependency):
 
 
 @router.get("/player/{player_id}", status_code=status.HTTP_200_OK, tags=["Players"])
-async def read_player(db: db_dependency, player_id:int = Path(gt=0)):
+async def read_player(db: db_dependency, player_id:str):
     player = db.query(Players).filter(Players.player_id == player_id).first()
     if player is None:
         raise HTTPException(status_code=404, detail='Player not found')
@@ -62,7 +68,7 @@ async def create_player(db: db_dependency, player_request: PlayerRequest):
     db.commit()
     
 @router.put("/player/{player_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Players"])
-async def update_player(db: db_dependency, player_request: PlayerRequest, player_id:int = Path(gt=0)):
+async def update_player(db: db_dependency, player_request: PlayerRequest, player_id:str):
     
     player = db.query(Players).filter(Players.player_id == player_id).first()
     
@@ -82,7 +88,7 @@ async def update_player(db: db_dependency, player_request: PlayerRequest, player
     
     
 @router.delete("/player/{player_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Players"])
-async def delete_player(db: db_dependency, player_id: int = Path(gt=0)):
+async def delete_player(db: db_dependency, player_id: str = Path(gt=0)):
 
     player = db.query(Players).filter(Players.player_id == player_id).first()
     if player is None:

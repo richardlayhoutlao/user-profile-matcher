@@ -19,9 +19,19 @@ def get_db():
         
 db_dependency = Annotated[Session, Depends(get_db)]
 
+class Level(BaseModel):
+    min: int
+    max: int
+
+class Matchers(BaseModel):
+    level: Level
+    has: dict
+    does_not_have: dict
+
 class CampaignRequest(BaseModel):
     name: str = Field(min_length= 3)
     game: str = Field(min_length= 3)
+    matchers: Matchers
     priority: int = Field(gt= 0)
     start_date: datetime
     end_date: datetime
@@ -33,7 +43,7 @@ async def read_all_campaigns(db: db_dependency):
 
 
 @router.get("/campaign/{campaign_id}", status_code=status.HTTP_200_OK, tags=["Campaigns"])
-async def read_campaign(db: db_dependency, campaign_id:int = Path(gt=0)):
+async def read_campaign(db: db_dependency, campaign_id:str):
     campaign = db.query(Campaigns).filter(Campaigns.campaign_id == campaign_id).first()
     if campaign is None:
         raise HTTPException(status_code=404, detail='Campaign not found')
@@ -50,7 +60,7 @@ async def create_campaign(db: db_dependency, campaign_request: CampaignRequest):
     db.commit()
     
 @router.put("/campaign/{campaign_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Campaigns"])
-async def update_campaign(db: db_dependency, campaign_request: CampaignRequest, campaign_id:int = Path(gt=0)):
+async def update_campaign(db: db_dependency, campaign_request: CampaignRequest, campaign_id:str):
     
     campaign = db.query(Campaigns).filter(Campaigns.campaign_id == campaign_id).first()
     
@@ -70,7 +80,7 @@ async def update_campaign(db: db_dependency, campaign_request: CampaignRequest, 
     
     
 @router.delete("/campaign/{campaign_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Campaigns"])
-async def delete_campaign(db: db_dependency, campaign_id: int = Path(gt=0)):
+async def delete_campaign(db: db_dependency, campaign_id: str = Path(gt=0)):
 
     campaign = db.query(Campaigns).filter(Campaigns.campaign_id == campaign_id).first()
     if campaign is None:
