@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Path
 from starlette import status
 from models import Campaigns, Players
 from database import SessionLocal
+from routers.campaigns import Matchers
 
 router = APIRouter()
 
@@ -59,13 +60,36 @@ async def get_client_config(db: db_dependency, player_id:str):
         raise HTTPException(status_code=404, detail='Player not found')
     
     current_time = datetime.now(pytz.UTC)
-    active_campaigns = db.query(Campaigns).filter(
+    active_campaign = db.query(Campaigns).filter(
         Campaigns.enabled == True,
         Campaigns.start_date <= current_time,
         Campaigns.end_date >= current_time
-    ).all()
+    ).order_by(Campaigns.priority.desc()).first()
     
-    print(active_campaigns)
+    if not active_campaign:
+        return {
+            "player_id": player.player_id,
+            "active_campaigns": player.active_campaigns,
+            "message": "No active campaigns available."
+        }
+    
+    matchers = active_campaign.matchers
+    min_level = matchers["level"]["min"]
+    max_level = matchers["level"]["max"]
+
+    if not (min_level <= player.level <= max_level):
+        return {
+            "player_id": player.player_id,
+            "player_level": player.level,
+            "campaign_min_level": min_level,
+            "campaign_max_level": max_level,
+            "message": "Player does not match the campaign criteria."
+        }
+    
+
+    
+    
+    return player
 
 @router.get("/player", status_code=status.HTTP_200_OK, tags=["Players"])
 async def read_all_players(db: db_dependency):
